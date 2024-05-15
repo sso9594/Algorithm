@@ -11,4 +11,4 @@ for i in arr:
 
 for i in range(len(val)):
     sum += val[i] * (31 ** i)
-print(sum)
+print(sum % 1234567891)
