@@ -57,14 +57,4 @@ class Solution {
         }
     }
     
-    static void add(int[] arr){
-        ArrayList<Integer> current = new ArrayList<>(); 
-        for(int i=0; i<arr.length; i++){
-            if(visited[i]){
-                current.add(arr[i]);
-            }
-        }
-        result.add(current);
-    }
-    
 }
