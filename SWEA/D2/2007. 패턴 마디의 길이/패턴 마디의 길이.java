@@ -60,9 +60,19 @@ class Solution
 		
 			String token = sc.next();
             for(int i=0; i<token.length()/2; i++){
+                boolean valid = true;
                 if(token.substring(0,i+1).equals(token.substring(i+1,i+i+2))){
-                    System.out.println("#" + test_case + " " + (i+1));
-                    break;
+                    int len = i+1;
+                    String checkStr = token.substring(0,i+1);
+                    for(int j=len; j<token.length()-len; j+=len){
+                        if(!checkStr.equals(token.substring(j, j+len))){
+                            valid = false;
+                        }
+                    }
+                    if(valid){
+                    	System.out.println("#" + test_case + " " + (i+1));
+	                	break;
+                    }
                 }
             }
 
