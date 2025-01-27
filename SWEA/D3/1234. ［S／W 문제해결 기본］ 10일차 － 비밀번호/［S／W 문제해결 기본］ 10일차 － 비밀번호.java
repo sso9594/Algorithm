@@ -1,54 +1,43 @@
 import java.util.*;
-import java.io.*;
 
-class Solution
-{
-	public static void main(String args[]) throws Exception
-	{
+public class Solution {
+    public static void main(String args[]) throws Exception {
 		Scanner sc = new Scanner(System.in);
 		int T;
 		T=10;
         
-		for(int test_case = 1; test_case <= T; test_case++)
-		{
+		for(int test_case = 1; test_case <= T; test_case++) {
             int N = sc.nextInt();
-            String token = sc.next();
-
+            String password = sc.next();
             ArrayList<Integer> arr = new ArrayList<>();
 
-            for(int i=0; i<N; i++){
-                arr.add(Integer.parseInt(token.charAt(i)+""));
+            for (int i = 0; i < password.length(); i++) {
+                arr.add(Integer.parseInt(password.charAt(i)+""));
             }
+
             while(true){
-                boolean valid = true;
-                for(int i=0; i<arr.size()-1; i++){
-                    if(isSequence(arr, i)){
-                        for(int j=0; j<2; j++){
+                boolean isvalid = true;
+                for (int i = 0; i < arr.size()-1; i++) {
+                    if(arr.get(i)==arr.get(i+1)){
+                        for (int j = 0; j < 2; j++) {
                             arr.remove(i);
                         }
-                        valid = false;
+                        isvalid = false;
                         break;
                     }
                 }
-                if(valid){
+                if(isvalid){
                     break;
                 }
             }
 
-            System.out.print("#" + test_case + " ");
-            for(int num : arr){
-                System.out.print(num);
+            String result = "";
+
+            for (int num : arr) {
+                result += num;
             }
-            System.out.println("");
             
-		}
-	}
-
-    static boolean isSequence(ArrayList<Integer> arr, int i){
-        if(arr.get(i)==arr.get(i+1)){
-            return true;
+            System.out.println("#" + test_case + " " + result);
         }
-        return false;
     }
-
 }
