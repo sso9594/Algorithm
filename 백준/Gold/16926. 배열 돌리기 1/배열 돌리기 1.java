@@ -2,15 +2,13 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-public class Main{
-    static int N;
-    static int M;
+public class Main {
     public static void main(String[] args) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
         int R = Integer.parseInt(st.nextToken());
 
         int[][] arr = new int[N][M];
@@ -22,52 +20,38 @@ public class Main{
             }
         }
 
-        for (int i = 0; i < R; i++) {
-            arr = rotation(arr);
+        // R번 회전
+        for (int r = 0; r < R; r++) {
+            // 레이어를 기준으로 회전하기 위해 N과 M중 작은 수를 나누기 2
+            for (int k = 0; k < Math.min(N/2, M/2); k++) {
+                // 모서리 하나를 빈칸으로 만들기 위해 임시 저장
+                int temp = arr[k][k];
+                // 위쪽 회전
+                for (int i = k; i < M-k-1; i++) {
+                    arr[k][i] = arr[k][i+1];
+                }
+                // 오른쪽 회전
+                for (int i = k; i < N-k-1; i++) {
+                    arr[i][M-k-1] = arr[i+1][M-k-1];
+                }
+                // 아래쪽 회전
+                for (int i = k; i < M-k-1; i++) {
+                    arr[N-k-1][M-i-1] = arr[N-k-1][M-i-2];
+                }
+                // 왼쪽 회전
+                for(int i = k; i < N-k-1; i++){
+                    arr[N-i-1][k] = arr[N-i-2][k];
+                }
+                arr[k+1][k] = temp;
+            }
         }
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
                 System.out.print(arr[i][j] + " ");
             }
-            System.out.println("");
+            System.out.println();
         }
     }
-
-    static int[][] rotation(int[][] arr){
-        int[][] arr_cpy = new int[N][M];
-        for (int k = 0; k < Math.min(N, M)/2; k++) {
-            // 위쪽
-            for (int j = k; j < M-1-k; j++) {
-                arr_cpy[k][j] = arr[k][j+1];
-            }
-            // 왼쪽
-            for (int i = N-1-k; i > k; i--) {
-                arr_cpy[i][k] = arr[i-1][k];
-            }
-            // 아래쪽
-            for (int j = M-1-k; j > k; j--) {
-                arr_cpy[N-1-k][j] = arr[N-1-k][j-1];
-            }
-            // 오른쪽
-            for (int i = k; i < N-1-k; i++) {
-                arr_cpy[i][M-1-k] = arr[i+1][M-1-k];
-            }
-        }
-
-        return arr_cpy;
-    }
-
+    
 }
-
-/* M = 4, N = 4
- * 00 01 02 03       01 02 03 13
- * 10 11 12 13   ->  00 12 22 23
- * 20 21 22 23       10 11 21 33
- * 30 31 32 33       20 30 31 32
- * 
- * [M-N][M-N]   [M-N][M-N+1]   [M-N][M-N+2]   [M-N][M-N+3]        [M-N+1][M-N]   [M-N][M-N]     [M-N][M-N+1]   [M-N][M-N+2]
- * [M-N+1][M-N] [M-N+1][M-N+1] [M-N+1][M-N+2] [M-N+1][M-N+3]      [M-N+2][M-N]   [M-N+2][M-N+1] [M-N+1][M-N+1] [M-N][M-N+3]
- * [M-N+2][M-N] [M-N+2][M-N+1] [M-N+2][M-N+2] [M-N+2][M-N+3]      [M-N+3][M-N]   [M-N+2][M-N+2] [M-N+1][M-N+2] [M-N+1][M-N+3]                
- * [M-N+3][M-N] [M-N+3][M-N+1] [M-N+3][M-N+2] [M-N+3][M-N+3]      [M-N+3][M-N+1] [M-N+3][M-N+2] [M-N+3][M-N+3] [M-N+2][M-N+3]
- */
