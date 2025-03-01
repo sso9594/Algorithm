@@ -1,39 +1,48 @@
-
-import java.util.*;
-import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class Main {
-    static int n,m;
+    static ArrayList<int[]> permuSet;
+    static int N;
+    static int M;
     static int[] arr;
-    static boolean[] visited;
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = sc.nextInt();
+        M = sc.nextInt();
 
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
+        arr = new int[N];
+        permuSet = new ArrayList<>();
 
-        visited =new boolean[n];
-        arr = new int[m];
-        dfs(n,m,0);
-    }
-    public static void dfs(int n, int m, int depth){
-        if(depth == m){
-            for(int val: arr){
-                System.out.print(val+ " ");
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = i+1;
+        }
+
+        permu(0, 0, new int[M], new boolean[N]);
+
+        for (int[] set : permuSet) {
+            for (int i = 0; i < set.length; i++) {
+                System.out.print(set[i] + " ");
             }
             System.out.println();
+        }
+    }
+
+    static void permu(int index, int depth, int[] sel, boolean[] visited){
+        if(depth==M){
+            permuSet.add(Arrays.copyOf(sel, depth));
             return;
         }
-        for(int i =0; i<n; i++){
+
+        for (int i = 0; i < N; i++) {
             if(!visited[i]){
                 visited[i] = true;
-                arr[depth] =i+1;
-                dfs(n,m,depth+1);
+                sel[depth] = arr[i];
+                permu(i+1, depth+1, sel, visited);
                 visited[i] = false;
             }
         }
     }
-
 }
