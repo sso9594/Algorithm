@@ -1,34 +1,53 @@
-import java.util.*;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
-public class Main{
-    static int n,m;
+public class Main {
+    static ArrayList<int[]> permuSet;
+    static int N;
+    static int M;
     static int[] arr;
-    static StringBuilder sb = new StringBuilder();
-    public static void dfs(int depth){
-        if(depth == m){
-            for(int i=0; i<m; i++){
-                sb.append(arr[i]).append(' ');
+    public static void main(String[] args) throws Exception{
+        Scanner sc = new Scanner(System.in);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        N = sc.nextInt();
+        M = sc.nextInt();
+
+        arr = new int[N];
+        permuSet = new ArrayList<>();
+
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = i+1;
+        }
+
+        permu(0, 0, new int[M], new boolean[N]);
+
+        for (int[] set : permuSet) {
+            for (int i = 0; i < set.length; i++) {
+                bw.write(set[i] + " ");
             }
-            sb.append('\n');
+            bw.write("\n");
+        }
+
+        bw.flush();
+    }
+
+    static void permu(int index, int depth, int[] sel, boolean[] visited){
+        if(depth==M){
+            permuSet.add(Arrays.copyOf(sel, depth));
             return;
         }
-        for(int i =1; i<=n; i++){
-            arr[depth] = i;
-            dfs(depth+1);
+        
+        if(index==N){
+            return;
+        }
+        
+        for (int i = 0; i < N; i++) {
+            sel[depth] = arr[i];
+            permu(index, depth+1, sel, visited);
         }
     }
-    public static void main(String[] args) throws IOException{
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-
-
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
-        arr = new int[m];
-
-        dfs(0);
-        System.out.println(sb);
-    }
-
 }
