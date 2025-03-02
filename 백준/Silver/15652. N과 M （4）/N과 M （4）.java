@@ -1,33 +1,58 @@
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
-public class Main{
-    static int n,m;
+public class Main {
+    static int N;
+    static int M;
     static int[] arr;
-    static StringBuilder sb = new StringBuilder();
-    public static void dfs(int start,int depth){
-        if(depth == m){
-            for(int i =0; i<m; i++){
-                sb.append(arr[i]).append(' ');
-            }
-            sb.append('\n');
-            return;
-        }
-        for(int i = start; i<=n; i++){
-            arr[depth] =i;
-            dfs(start, depth+1);
-            start+=1;
-        }
-    }
-    public static void main(String[] args) throws IOException{
+    static ArrayList<int[]> combSet;
+
+    public static void main(String[] args) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
-        arr= new int[m];
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
 
-        dfs(1,0);
-        System.out.println(sb);
+        arr = new int[N];
+        combSet = new ArrayList<>();
+
+        for (int i = 0; i < N; i++) {
+            arr[i] = i+1;
+        }
+
+        comb(0, 0, new int[M]);
+
+        for (int[] set : combSet) {
+            for (int i = 0; i < set.length; i++) {
+                bw.write(set[i] + " ");
+            }
+            bw.write("\n");
+        }
+
+        bw.flush();
+    }
+
+    static void comb(int index, int depth, int[] sel){
+        if(depth == M){
+            combSet.add(Arrays.copyOf(sel, depth));
+            return;
+        }
+
+        if(index==N){
+            return;
+        }
+
+        for (int i = index; i < N; i++) {
+            sel[depth] = arr[i];
+            comb(i, depth+1, sel);
+        }
     }
 }
