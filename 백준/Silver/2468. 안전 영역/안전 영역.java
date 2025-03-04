@@ -1,62 +1,68 @@
-import java.util.*;
-import java.io.*;
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.Scanner;
 
 public class Main {
-    static int N;
-    static int[][] arr;
-    static boolean[][] visited;
-    static int[] dx = {-1,1,0,0};
-    static int[] dy = {0,0,-1,1};
-    public static void main(String[] args) {
+	
+	static int N;
+	static int[][] map;
+	static int[] dx = {-1,1,0,0};
+	static int[] dy = {0,0,-1,1};
+	
+	public static void main(String[] args){
+		//--------------솔루션 코드를 작성하세요.--------------------------------
+		Scanner sc = new Scanner(System.in);
+		N = sc.nextInt();
+		map = new int[N][N];
+		int result = 0;
+		
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				map[i][j] = sc.nextInt();
+			}
+		}
+		
+		for (int level = 0; level < Integer.MAX_VALUE; level++) {
+			int area = 0;
+			boolean[][] visited = new boolean[N][N];
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					if(!visited[i][j] && map[i][j]>level) {
+						bfs(i,j,level,visited);
+						area++;
+					}
+				}
+			}
+			if(area == 0) {
+				break;
+			}
+			
+			result = Math.max(result, area);
+		}
+		
+		System.out.println(result);
+	}
+	
+	static void bfs(int x, int y, int level, boolean[][] visited) {
+		Queue<int[]> queue = new ArrayDeque<>();
+		queue.offer(new int[] {x, y});
+		visited[x][y] = true;
+		while(!queue.isEmpty()) {
+			int[] current = queue.poll();
+			int currentX = current[0];
+			int currentY = current[1];
+			
+			for (int i = 0; i < dx.length; i++) {
+				int nextX = currentX + dx[i];
+				int nextY = currentY + dy[i];
+				if(nextX>=0 && nextY>=0 && nextX<N && nextY<N
+						&& !visited[nextX][nextY] && map[nextX][nextY]>level) {
+					queue.offer(new int[] {nextX, nextY});
+					visited[nextX][nextY] = true;
+				}
+			}
+		}
 
-        Scanner sc = new Scanner(System.in);
-        N = sc.nextInt();
-        arr = new int[N][N];
-        int max = 0;
-
-        for(int i=0; i<N; i++){
-            for(int j=0; j<N; j++){
-                arr[i][j] = sc.nextInt();
-            }
-        }
-
-        for(int height=0; height<=100; height++){
-            visited = new boolean[N][N];
-            int count = 0;
-            for(int i=0; i<N; i++){
-                for(int j=0; j<N; j++){
-                    if(!visited[i][j] && arr[i][j] > height){
-                        countArea(height, i, j);
-                        count++;
-                    }
-                }
-            }
-            max = Math.max(max, count);
-        }
-
-        System.out.println(max);
-    }
-
-    static void countArea(int height, int x, int y){
-        Queue<int[]> queue = new LinkedList<>();
-        queue.offer(new int[]{x, y});
-        visited[x][y] = true;
-
-        while (!queue.isEmpty()) {
-            int[] current = queue.poll();
-            int currentX = current[0];
-            int currentY = current[1];
-            for(int i=0; i<4; i++){
-                int nextX = dx[i] + currentX;
-                int nextY = dy[i] + currentY;
-                if(nextX >= 0 && nextY >= 0 && nextX < N && nextY < N && !visited[nextX][nextY]
-                && arr[nextX][nextY] > height){
-                    visited[nextX][nextY] = true;
-                    queue.offer(new int[] {nextX, nextY});
-                }
-            }
-        }
-
-    }
+	}
 
 }
