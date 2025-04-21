@@ -1,123 +1,120 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class Main {
+    static class Node{
+        int w;
+        int[] edge;
+        
+        Node(int w){
+            this.w = w;
+        }
+    }
     static int N;
-    static int[] population;
-    static int[][] adjMat;
-    static ArrayList<ArrayList<Integer>> powerSet;
-    static boolean[] visited;
-
-    public static void main(String[] args) throws Exception{
+    static Node[] nodes;
+    static int result;
+    public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-
-        population = new int[N];
-        powerSet = new ArrayList<>();
-        int min = Integer.MAX_VALUE;
-
+        nodes = new Node[N];
         StringTokenizer st = new StringTokenizer(br.readLine());
-
-        for (int i = 0; i < population.length; i++) {
-            population[i] = Integer.parseInt(st.nextToken());
+        for (int i = 0; i < N; i++) {
+            nodes[i] = new Node(Integer.parseInt(st.nextToken()));
         }
-        
-        adjMat = new int[N][N];
+
+        result = Integer.MAX_VALUE;
 
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
-            int count = Integer.parseInt(st.nextToken());
-            for (int j = 0; j < count; j++) {
-                int v = Integer.parseInt(st.nextToken())-1;
-                adjMat[i][v]=1;
-                adjMat[v][i]=1;
+            int size = Integer.parseInt(st.nextToken());
+            nodes[i].edge = new int[size];
+            for (int j = 0; j < size; j++) {
+                nodes[i].edge[j] = Integer.parseInt(st.nextToken())-1;
             }
         }
 
-        powerSet(0, 0, new ArrayList<>());
+        powerSet(0, new boolean[N]);
 
-        for (ArrayList<Integer> set : powerSet) {
-            visited = new boolean[N];
-            // set 집합 도달 가능 여부 확인
-            checkVertex(set.get(0), set);
-
-            // list와 반대되는 집합
-            ArrayList<Integer> opposite = new ArrayList<>();
-            for (int i = 0; i < N; i++) {
-                opposite.add(i);
-            }
-            for (int i = 0; i < set.size(); i++) {
-                for (int j = 0; j < opposite.size(); j++) {
-                    if(opposite.get(j).equals(set.get(i))){
-                        opposite.remove(j);
-                    }
-                }
-            }
-
-            // 반대 집합 도달 가능 여부 확인
-            checkVertex(opposite.get(0), opposite);
-
-            // 모든 visited가 true이면 계산 가능
-            boolean valid = true;
-            for (int i = 0; i < visited.length; i++) {
-                if(!visited[i]) valid = false;
-            }
-            
-            // 최소값 계산
-            if(valid){
-                int setSum = 0;
-                int oppSum = 0;
-                for (int i = 0; i < set.size(); i++) {
-                    setSum += population[set.get(i)];
-                }
-                for (int i = 0; i < opposite.size(); i++) {
-                    oppSum += population[opposite.get(i)];
-                }
-
-                min = Math.min(min, Math.abs(setSum-oppSum));
-            } 
-
-        }
-
-        System.out.println(min == Integer.MAX_VALUE ? -1 : min);
-
+        System.out.println(result == Integer.MAX_VALUE ? -1 : result);
     }
 
-    // 도달 여부 조사 함수, 도달 하더라도, list에 없는 정점은 방문처리 하면 안됨
-    static void checkVertex(int v, ArrayList<Integer> list){
-        if(visited[v]){
+    static void powerSet(int depth, boolean[] sel) {
+        if(depth == N){
+            calC(sel);
             return;
         }
 
-        visited[v] = true;
+        sel[depth] = true;
+        powerSet(depth+1, sel);
+        sel[depth] = false;
+        powerSet(depth+1, sel);
+    }
 
-        for (int i = 0; i < adjMat[v].length; i++) {
-            if(adjMat[v][i]==1 && list.contains(i)){
-                checkVertex(i, list);
+    static void calC(boolean[] sel) {
+
+        List<Integer> A = new ArrayList<>();
+        List<Integer> B = new ArrayList<>();
+
+        for (int i = 0; i < N; i++) {
+            if(sel[i]) {
+                A.add(i);
             }
         }
 
-        return;
+        for (int i = 0; i < N; i++) {
+            if(!sel[i]) {
+                B.add(i);
+            }
+        }
+
+        if(A.size() == 0 || B.size() == 0) return;
+
+        boolean[] visitedA = new boolean[N];
+        checkVertex(visitedA, A, A.get(0), 0);
+        boolean[] visitedB = new boolean[N];
+        checkVertex(visitedB, B, B.get(0), 0);
+
+        int count = 0;
+        int count2 = 0;
+        for (int i = 0; i < N; i++) {
+            if(visitedA[i]){
+                count++;
+            }
+            if(visitedB[i]){
+                count2++;
+            }
+        }
+        if(count != A.size()) return;
+        if(count2 != B.size()) return;
+
+        int sumA = 0;
+        int sumB = 0;
+
+        for (int num : A) {
+            sumA += nodes[num].w;
+        }
+        for (int num : B){
+            sumB += nodes[num].w;
+        }
+
+        result = Math.min(result, Math.abs(sumA-sumB));
     }
 
-    static void powerSet(int index, int depth, ArrayList<Integer> sel){
-        if(index==N){
-            if(sel.size()!=0 && sel.size()!=N){
-                ArrayList<Integer> copy = new ArrayList<>(sel);
-                powerSet.add(copy);
-            }
+    static void checkVertex(boolean[] visitedA, List<Integer> arr, int index, int depth) {
+        if(depth == N){
             return;
         }
 
-        powerSet(index+1, depth, sel);
+        visitedA[index] = true;
 
-        sel.add(depth, index);
-        powerSet(index+1, depth+1, sel);
-        sel.remove(depth);
+        for (int edge : nodes[index].edge) {
+            if(arr.contains(edge) && !visitedA[edge]){
+                checkVertex(visitedA, arr, edge, depth);
+            }
+        }
     }
 }
-/*
- * 파워셋(인데 모든 정점이 포함되어있는 세트)을 전부 뽑아서 해당 세트 전부 dfs로 연결되어있는지 확인
- * 전부 연결되어있으면 연결된 각 부분들의 합 계산 후 최소값 계산
- * 파워셋을 뽑고 포함되지 않은 정점은 다른 세트에 두면 됨
- */
