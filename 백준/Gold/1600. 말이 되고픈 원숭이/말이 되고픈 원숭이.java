@@ -1,85 +1,83 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int K;
-    static int W;
-    static int H;
-    static int min;
+    static int K, W, H;
     static int[][] map;
     static int[] dx = {-1,1,0,0};
     static int[] dy = {0,0,-1,1};
-    static int[] dxHorse = {-1, -2, -2, -1, 1, 2, 2, 1};
-    static int[] dyHorse = {-2, -1, 1, 2, 2, 1, -1, -2};
+    static int[] hdx = {-1,-2,-2,-1,1,2,2,1};
+    static int[] hdy = {-2,-1,1,2,-2,-1,1,2};
+    static int result;
     
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         K = Integer.parseInt(br.readLine());
-
         StringTokenizer st = new StringTokenizer(br.readLine());
-
         W = Integer.parseInt(st.nextToken());
         H = Integer.parseInt(st.nextToken());
-        min = Integer.MAX_VALUE;
 
-        map = new int[W][H];
+        result = Integer.MAX_VALUE;
+
+        map = new int[H][W];
 
         for (int i = 0; i < H; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < W; j++) {
-                map[j][i] = Integer.parseInt(st.nextToken());
+                map[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
-        bfs(0, 0);
-        
-        System.out.println(min==Integer.MAX_VALUE ? -1 : min);
+        bfs(0,0);
+        System.out.println(result == Integer.MAX_VALUE ? -1 : result);
     }
 
     static void bfs(int x, int y){
-        Queue<int[]> queue = new LinkedList<>();
-        queue.offer(new int[]{x, y, 0, K});
-        boolean[][][] visited = new boolean[W][H][K+1];
-        visited[x][y][K] = true;
+        Queue<int[]> queue = new ArrayDeque<>();
+        queue.offer(new int[]{x, y, 0, 0});
+        boolean[][][] visited = new boolean[H][W][K+1];
+        visited[x][y][0] = true;
 
         while (!queue.isEmpty()) {
-            int[] current = queue.poll();
-            int currentX = current[0];
-            int currentY = current[1];
-            int count = current[2];
-            int horseCnt = current[3];
-            if(currentX==W-1 && currentY==H-1){
-                min = Math.min(min, count);
+            int[] cur = queue.poll();
+            int cx = cur[0];
+            int cy = cur[1];
+            int ck = cur[2];
+            int count = cur[3];
+
+            if(cx == H-1 && cy == W-1){
+                result = Math.min(result, count);
                 continue;
             }
+
             for (int i = 0; i < dx.length; i++) {
-                int nextX = currentX + dx[i];
-                int nextY = currentY + dy[i];
-                int nextCnt = count+1;
-                if(nextX>=0 && nextY>=0 && nextX<W && nextY<H && !visited[nextX][nextY][horseCnt]
-                && map[nextX][nextY]!=1){
-                    visited[nextX][nextY][horseCnt] = true;
-                    queue.offer(new int[]{nextX, nextY, nextCnt, horseCnt});
+                int nx = cx + dx[i];
+                int ny = cy + dy[i];
+                
+                if(nx>=0 && ny>=0 && nx<H && ny<W &&
+                !visited[nx][ny][ck] && map[nx][ny]!=1){
+                    queue.offer(new int[]{nx, ny, ck, count+1});
+                    visited[nx][ny][ck] = true;
                 }
             }
-            if(horseCnt>0){
-                for (int i = 0; i < dxHorse.length; i++) {
-                    int nextX = currentX + dxHorse[i];
-                    int nextY = currentY + dyHorse[i];
-                    int nextCnt = count + 1;        
-                    if(nextX>=0 && nextY>=0 && nextX<W && nextY<H && !visited[nextX][nextY][horseCnt-1]
-                    && map[nextX][nextY]!=1){
-                        visited[nextX][nextY][horseCnt-1] = true;
-                        queue.offer(new int[]{nextX, nextY, nextCnt, horseCnt-1});
+
+            if(ck < K){
+                for (int i = 0; i < hdx.length; i++) {
+                    int nx = cx + hdx[i];
+                    int ny = cy + hdy[i];
+                    if(nx>=0 && ny>=0 && nx<H && ny<W &&
+                    !visited[nx][ny][ck+1] && map[nx][ny]!=1){
+                        queue.offer(new int[]{nx, ny, ck+1, count+1});
+                        visited[nx][ny][ck+1] = true;
                     }
                 }
-            }
+            } 
+                       
         }
     }
-
 }
+
