@@ -4,71 +4,68 @@ import java.util.*;
 public class Solution {
     static int N;
     static int[][] map;
+    static int result;
     static int[] dx = {-1,1,0,0};
     static int[] dy = {0,0,-1,1};
+    static class Node implements Comparable<Node>{
+        int x, y, time;
 
-    static class Point implements Comparable<Point>{
-        int x, y, w;
-        Point(int x, int y, int w){
+        Node(int x, int y, int time) {
             this.x = x;
             this.y = y;
-            this.w = w;
+            this.time = time;
         }
 
         @Override
-        public int compareTo(Solution.Point o) {
-            return Integer.compare(this.w, o.w);
+        public int compareTo(Solution.Node o) {
+            return Integer.compare(this.time, o.time);
         }
     }
-
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int T = Integer.parseInt(br.readLine());
-
         for (int test_case = 1; test_case <= T; test_case++) {
             N = Integer.parseInt(br.readLine());
             map = new int[N][N];
+            result = Integer.MAX_VALUE;
+
             for (int i = 0; i < N; i++) {
                 String token = br.readLine();
                 for (int j = 0; j < N; j++) {
                     map[i][j] = Integer.parseInt(token.charAt(j)+"");
                 }
             }
-            
-            System.out.println("#"+ test_case + " " + dijkstra());
+
+            bfs(0,0);
+
+            System.out.println("#" + test_case + " " + result);
         }
     }
 
-    static int dijkstra(){
-        PriorityQueue<Point> pq = new PriorityQueue<>();
-        boolean[][] visited = new boolean[N][N];
+    static void bfs(int x, int y) {
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+        pq.offer(new Node(x, y, map[x][y]));
         int[][] dist = new int[N][N];
+
         for (int i = 0; i < N; i++) {
-            Arrays.fill(dist[i], Integer.MAX_VALUE);
+            Arrays.fill(dist[i], Integer.MAX_VALUE);    
         }
-        ArrayList<Integer> first = new ArrayList<>();
-        first.add(0);
-        first.add(0);
-        pq.add(new Point(0, 0, map[0][0]));
+        
         dist[0][0] = 0;
 
         while (!pq.isEmpty()) {
-            Point cur = pq.poll();
-            int cx = cur.x;
-            int cy = cur.y;
+            Node cur = pq.poll();
 
             for (int i = 0; i < dx.length; i++) {
-                int nx = cx + dx[i];
-                int ny = cy + dy[i];
-                if(nx>=0&&ny>=0&&nx<N&&ny<N&&
-                !visited[nx][ny] && dist[cx][cy]+map[nx][ny] < dist[nx][ny]){
-                    dist[nx][ny] = dist[cx][cy] + map[nx][ny];
-                    pq.add(new Point(nx, ny, map[nx][ny]));
+                int nx = cur.x + dx[i];
+                int ny = cur.y + dy[i];
+                if(nx>=0 && ny>=0 && nx<N && ny<N && dist[nx][ny] > dist[cur.x][cur.y] + map[nx][ny]){
+                    dist[nx][ny] = dist[cur.x][cur.y] + map[nx][ny];
+                    pq.offer(new Node(nx, ny, map[nx][ny]));
                 }
             }
         }
 
-        return dist[N-1][N-1];
+        result = dist[N-1][N-1];
     }
-
 }
