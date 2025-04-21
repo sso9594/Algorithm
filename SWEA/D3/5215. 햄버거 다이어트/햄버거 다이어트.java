@@ -1,51 +1,43 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 public class Solution {
-	
-	static int limit;
-	static int N;
-	static int max;
-	static int[][] info;
-	
-	public static void main(String args[]) throws Exception
-	{
-		Scanner sc = new Scanner(System.in);
-		int T;
-		T=sc.nextInt();
+    static int N;
+    static int L;
+    static int result;
+    static int[][] material;
+    public static void main(String[] args) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int T = Integer.parseInt(br.readLine());
+        for (int test_case = 1; test_case <= T; test_case++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            N = Integer.parseInt(st.nextToken());
+            L = Integer.parseInt(st.nextToken());
 
-		for(int test_case = 1; test_case <= T; test_case++)
-		{
-			N = sc.nextInt();
-			limit = sc.nextInt();
-			max = 0;
-			//info[n][0]은 맛 점수, info[n][1]은 칼로리
-			info = new int[N][2];
-			for(int i=0; i<N; i++) {
-				info[i][0] = sc.nextInt();
-				info[i][1] = sc.nextInt();
-			}
-			
+            material = new int[N][2];
+            for (int i = 0; i < N; i++) {
+                st = new StringTokenizer(br.readLine());
+                material[i][1] = Integer.parseInt(st.nextToken());
+                material[i][0] = Integer.parseInt(st.nextToken());
+            }
 
-			dfs(0, 0, 0);
+            result = 0;
 
-			
-			System.out.println("#" + test_case + " " + max);
-		}
-	}
-	
-	static void dfs(int material, int cal_sum, int point_sum) {
-		
-		if(cal_sum > limit) {
-			return;
-		}
-		
-		max = Math.max(point_sum, max);
-		
-		for(int i=material; i<N; i++) {
-			dfs(i + 1, cal_sum+info[i][1], point_sum+info[i][0]);
-		}
-			
-	}
+            dfs(0, 0, 0);
+
+            System.out.println("#" + test_case + " " + result);
+        }
+    }
+
+    static void dfs(int cal, int index, int score){
+        if(cal>L) return;
+        if(index == N){
+            result = Math.max(result, score);
+            return;
+        }
+
+        dfs(cal+material[index][0], index+1, score + material[index][1]);
+        dfs(cal, index+1, score);
+    }
 
 }
