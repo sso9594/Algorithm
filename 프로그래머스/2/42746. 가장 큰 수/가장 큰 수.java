@@ -1,27 +1,17 @@
 import java.util.*;
+
 class Solution {
     public String solution(int[] numbers) {
         String answer = "";
-        List<String> cArray = new ArrayList<>();
-        // 숫자를 문자열로 변환
-        for(int number : numbers){
-            String num = Integer.toString(number);
-            cArray.add(num);
+        String[] str = new String[numbers.length];
+        for(int i=0; i<numbers.length; i++){
+            str[i] = Integer.toString(numbers[i]);
         }
-        //람다식을 이용해 두 원소를 문자열로 더한 후 정수로 크기 비교
-        cArray.sort((o1, o2) -> {
-            int num1 = Integer.parseInt(o1 + o2);
-            int num2 = Integer.parseInt(o2 + o1);
-            return Integer.compare(num2, num1);
-        });
+        Arrays.sort(str, (o1, o2) -> (o2+o1).compareTo(o1+o2));
+        if(str[0].equals("0")) return "0";
         StringBuilder sb = new StringBuilder();
-        for(String ans : cArray){
-            sb.append(ans);
-        }
+        for(String s : str) sb.append(s);
         answer = sb.toString();
-        if(answer.charAt(0) == '0'){
-            return "0";
-        }
         return answer;
     }
 }
