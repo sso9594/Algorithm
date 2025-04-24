@@ -1,24 +1,39 @@
+import java.util.*;
+
 class Solution {
-    
-    static boolean[] visited;
-    static int answer = -1;
-    
+    int answer;
     public int solution(int k, int[][] dungeons) {
-        visited = new boolean[dungeons.length];
-        dfs(dungeons, k, 0);
+        answer = -1;
+        permu(k, dungeons, dungeons.length, 0, new int[dungeons.length], new boolean[dungeons.length]);
         return answer;
     }
-    private void dfs(int[][] dungeons, int k, int count){
-        answer = Math.max(answer, count);
-        for(int i=0; i<dungeons.length; i++){
-            if(visited[i] == false && dungeons[i][0] <= k){
+    
+    void permu(int k, int[][] dungeons, int n, int depth, int[] sel, boolean[] visited){
+        if(depth == n){
+            calc(k, dungeons, sel);
+        }
+        
+        for(int i=0; i<n; i++){
+            if(!visited[i]){
+                sel[depth] = i;
                 visited[i] = true;
-                k -= dungeons[i][1];
-                
-                dfs(dungeons, k, count + 1);
+                permu(k, dungeons, n, depth+1, sel, visited);
                 visited[i] = false;
-                k += dungeons[i][1];
             }
         }
+    }
+    
+    void calc(int k, int[][] dungeons, int[] sel){
+        int count = 0;
+        for(int i=0; i<sel.length; i++){
+            int cur = sel[i];
+            if(dungeons[cur][0] <= k){
+                k -= dungeons[cur][1];
+                count++;
+            } else{
+                break;
+            }
+        }
+        answer = Math.max(answer, count);
     }
 }
