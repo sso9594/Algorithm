@@ -27,12 +27,16 @@ public class Main {
 
         for (int i = 0; i < road.length; i++) {
             answer += gas[i] * road[i];
+            int current = i;
             for (int j = i+1; j < road.length; j++) {
                 if(gas[i] < gas[j]){
                     answer += gas[i] * road[j];
-                    i=j;
+                    current = j;
+                } else {
+                    break;
                 }
             }
+            i = current;
         }
 
         System.out.println(answer);
@@ -45,3 +49,5 @@ public class Main {
  * 현재 위치의 주유소에서 다음 주유소가 자기 보다 낮은 가격일 때 까지의
  * 거리를 전부 구매
  */
+
+ 
