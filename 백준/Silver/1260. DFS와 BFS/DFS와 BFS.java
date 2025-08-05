@@ -1,71 +1,82 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
+    static int N;
+    static int M;
+    static int start;
+    static ArrayList<Integer>[] adjList;
 
-    static StringBuilder sb = new StringBuilder();
-
-    static int n,m,v = 0;
-    static int[][] edge;
-    static boolean[] visited;
-    static Queue<Integer> queue = new LinkedList<>();
-
-
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
-        v = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        start = Integer.parseInt(st.nextToken())-1;
 
-        edge = new int[n+1][n+1];
-        visited = new boolean[n+1];
+        adjList = new ArrayList[N];
 
-        for(int i=0; i<m; i++){
-            st = new StringTokenizer(br.readLine());
-            int start = Integer.parseInt(st.nextToken());
-            int end = Integer.parseInt(st.nextToken());
-
-            edge[start][end] = 1;
-            edge[end][start] = 1;
+        for (int i = 0; i < N; i++) {
+            adjList[i] = new ArrayList<>();
         }
 
-        dfs(v);
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int v = Integer.parseInt(st.nextToken())-1;
+            int e = Integer.parseInt(st.nextToken())-1;
 
-        visited = new boolean[n+1];
+            adjList[v].add(e);
+            adjList[e].add(v);
+        }
 
-        sb.append("\n");
-        
-        bfs(v);
+        for (int i = 0; i < N; i++) {
+            Collections.sort(adjList[i]);
+        }
 
-        System.out.println(sb);
+        dfs(start, new boolean[N]);
+        System.out.println();
+        bfs(start);
 
     }
 
-    static void dfs(int x){
-        visited[x] = true;
-        sb.append(x + " ");
-        for(int j=1; j<=n; j++){
-            if(!visited[j] && edge[x][j]==1){
-                dfs(j);
+    static void bfs(int start){
+        Queue<Integer> queue = new ArrayDeque<>();
+        queue.offer(start);
+        boolean[] visited = new boolean[N];
+        visited[start] = true;
+        StringBuilder sb = new StringBuilder();
+
+        while (!queue.isEmpty()) {
+            int cur = queue.poll();
+            sb.append(cur+1 + " ");
+
+            for (int v : adjList[cur]) {
+                if(!visited[v]){
+                    queue.offer(v);
+                    visited[v] = true;
+                }
             }
         }
 
+        System.out.println(sb.toString());
     }
 
-    static void bfs(int x){
-        queue.add(x);
-        visited[x] = true;
+    static void dfs(int index, boolean[] visited){
+        
+        visited[index] = true;
+        System.out.print(index+1 + " ");
 
-        while(!queue.isEmpty()){
-            int temp = queue.poll();
-            sb.append(temp + " ");
-            for(int k=1; k<=n; k++){
-                if(edge[temp][k] == 1 && !visited[k]){
-                    queue.add(k);
-                    visited[k] = true;
-                }
+        for (int v : adjList[index]) {
+            if(!visited[v]){
+                dfs(v, visited);
             }
         }
     }
