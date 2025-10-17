@@ -5,11 +5,11 @@ class Solution {
         long right = 1_000_000_000L * 1_000_000_000L;
         while(left <= right){
             long mid = (left + right) / 2;
-            long calc=0;
+            long sum = 0;
             for(int time : times){
-                calc += mid / (long)time;
+                sum += mid / time;
             }
-            if (calc >= n) {
+            if(sum >= n){
                 answer = mid;
                 right = mid - 1;
             } else {
