@@ -1,16 +1,13 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
+
         int N = Integer.parseInt(st.nextToken());
         int K = Integer.parseInt(st.nextToken());
 
@@ -27,11 +24,12 @@ public class Main {
         for (int i = 0; i < N; i++) {
             map.put(arr[i], map.getOrDefault(arr[i], 0)+1);
             if(map.get(arr[i]) > K){
-                while (map.get(arr[i]) > K) {
+                while(map.get(arr[i]) > K){
                     map.put(arr[left], map.get(arr[left])-1);
                     left++;
                 }
             }
+
             int len = i - left + 1;
             answer = Math.max(answer, len);
         }
@@ -39,10 +37,3 @@ public class Main {
         System.out.println(answer);
     }
 }
-/**
- * 9 2
- * 3 2 5 5 6 4 4 5 7
- * 
- * 
- * 7
- */
