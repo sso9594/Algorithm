@@ -3,31 +3,40 @@ import java.util.*;
 class Solution {
     public int[] solution(String[] operations) {
         int[] answer = new int[2];
-        PriorityQueue<Integer> maxQ = new PriorityQueue<>(Collections.reverseOrder());
-        PriorityQueue<Integer> minQ = new PriorityQueue<>();
-
-        for(String operation : operations){
-            StringTokenizer st = new StringTokenizer(operation);
-            String command = st.nextToken();
-            int num = Integer.parseInt(st.nextToken());
-            if(maxQ.isEmpty() && command.equals("D")) continue;
+        PriorityQueue<Integer> maxq = new PriorityQueue<>((e1, e2) -> Integer.compare(e2, e1));
+        PriorityQueue<Integer> minq = new PriorityQueue<>();
+        
+        for(String op : operations){
+            String[] commands = op.split(" ");
+            String command = commands[0];
+            int num = Integer.parseInt(commands[1]);
+            
             if(command.equals("I")){
-                maxQ.offer(num);
-                minQ.offer(num);
+                maxq.offer(num);
+                minq.offer(num);
             } else if(command.equals("D")){
-                if(num==1){
-                    minQ.remove(maxQ.poll());
-                } else if(num==-1){
-                    maxQ.remove(minQ.poll());
+                if(num == 1){
+                    if(!maxq.isEmpty()){
+                        minq.remove(maxq.poll());
+                    }
+                } else if(num == -1){
+                    if(!minq.isEmpty()){
+                        maxq.remove(minq.poll());    
+                    }
                 }
             }
         }
         
-        if(maxQ.isEmpty()) answer[0] = answer[1] = 0;
-        else{
-            answer[0] = maxQ.poll();
-            answer[1] = minQ.poll();   
+        if(maxq.isEmpty() && minq.isEmpty()){
+            answer[0] = 0;
+            answer[1] = 0;
+            
+            return answer;
         }
+        
+        answer[0] = maxq.poll();
+        answer[1] = minq.poll();
+        
         return answer;
     }
 }
