@@ -3,24 +3,20 @@ import java.util.*;
 class Solution {
     public int solution(int[] scoville, int K) {
         int answer = 0;
-        PriorityQueue<Integer> queue = new PriorityQueue<>();
-        for(int i=0; i<scoville.length; i++){
-            queue.offer(scoville[i]);
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        for(int num : scoville){
+            pq.offer(num);
         }
         
-        while(queue.peek() < K){
-            if(queue.size() < 2){
-                answer = -1;
-                break;
-            }
-            int min = queue.poll();
-            int sec = queue.poll();
+        while(pq.peek() < K && pq.size() >= 2){
+            int num1 = pq.poll();
+            int num2 = pq.poll();
             
-            int mix = min + (sec * 2);
-            queue.offer(mix);
+            int comb = num1 + num2 * 2;
+            pq.offer(comb);
             answer++;
         }
-        
+        if(pq.peek() < K) answer = -1;
         return answer;
     }
 }
