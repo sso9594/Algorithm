@@ -1,10 +1,10 @@
 # [level 3] 베스트앨범 - 42579 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/42579) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/42579?language=csharp) 
 
 ### 성능 요약
 
-메모리: 88.6 MB, 시간: 2.19 ms
+메모리: 46.5 MB, 시간: 1.26 ms
 
 ### 구분
 
@@ -16,7 +16,7 @@
 
 ### 제출 일자
 
-2025년 12월 08일 22:31:54
+2026년 08월 11일 00:36:21
 
 ### 문제 설명
 
